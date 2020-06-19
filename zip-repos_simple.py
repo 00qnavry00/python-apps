@@ -41,14 +41,14 @@ def zip (repos, zip_name, login_str, branch):
 ## Assuming that xx.x branch value is only reserved for release branches
 ## If not float value is entered, entered value is assumed to be an existing branch name (Ex.: master, develop)
 
-# def full_branch_name(branch, char):
-#     branch_name = branch
-#     try:
-#         float(branch)
-#         branch_name = 'release' + char + branch
-#         return branch_name
-#     except ValueError:
-#         return branch_name
+def full_branch_name(branch, char):
+    branch_name = branch
+    try:
+        float(branch)
+        branch_name = 'release' + char + branch
+        return branch_name
+    except ValueError:
+        return branch_name
 
 def main(): #USED TO HAVE 'argv = None' AS PARAMETER. IF ERROR RESULTS, RETURN TO THIS
     argv = sys.argv[1:]
@@ -84,10 +84,10 @@ def main(): #USED TO HAVE 'argv = None' AS PARAMETER. IF ERROR RESULTS, RETURN T
         if "-repo" in argv:
             start = argv.index("-repo") + 1
             if "-b" in argv:
-                finish = argv.index("-b")
+                finish_index = argv.index("-b")
             else:
-                finish = argv.index("master")
-            desired_repos = argv[start:finish]
+                finish_index = argv.index("master")
+            desired_repos = argv[start:finish_index]
             for k in desired_repos:
                 if k in repo_list:
                     zip([k.lower()], k, "", 'master')
