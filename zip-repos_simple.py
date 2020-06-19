@@ -9,8 +9,8 @@ import optparse
 
 
 def zip (repos, zip_name, login_str, branch):
-    cloneHTTPS = "git clone http://"
-    github ="github.com/00qnavry00/"
+    cloneHTTPS = "git clone https://"
+    github ="github.com/00qnavry00"
 
     # if there is only one repo in the repos list, there is no need to create a project directory
     if len(repos) == 1:
@@ -36,7 +36,7 @@ def zip (repos, zip_name, login_str, branch):
         os.chdir('../')
         os.system('zip -r9 %s.zip %s' % (zip_name, zip_name))
         os.system('rm -rf %s' % zip_name)
-    
+
 
 ## Assuming that xx.x branch value is only reserved for release branches
 ## If not float value is entered, entered value is assumed to be an existing branch name (Ex.: master, develop)
@@ -50,19 +50,19 @@ def zip (repos, zip_name, login_str, branch):
 #     except ValueError:
 #         return branch_name
 
-def main(): #USED TO HAVE 'argv = None' HERE. IF ERROR RESULTS, RETURN TO THIS
+def main(): #USED TO HAVE 'argv = None' AS PARAMETER. IF ERROR RESULTS, RETURN TO THIS
     argv = sys.argv[1:]
     try:
-        if not "-l" in argv:
-            print("\nPlease add '-l <login_name>:<password>' as argument to this script for authentication.\n")
-            sys.exit()
-        else:
-            i = argv.index("-l")
-            login = argv[i+1]
-            
-            if not len(login) or not ':' in login:
-                print("\nPlease provide login info in the following format: -l <login_name>:<password>\n")
-                sys.exit()
+        # if not "-l" in argv:
+        #     print("\nPlease add '-l <login_name>:<password>' as argument to this script for authentication.\n")
+        #     sys.exit()
+        # else:
+        #     i = argv.index("-l")
+        #     login = argv[i+1]
+        #
+        #     if not len(login) or not ':' in login:
+        #         print("\nPlease provide login info in the following format: -l <login_name>:<password>\n")
+        #         sys.exit()
 
         if not "-b" in argv:
             print("\nSince '-b <branch_name>' is not specified, we will zip master branch.\n")
@@ -71,12 +71,14 @@ def main(): #USED TO HAVE 'argv = None' HERE. IF ERROR RESULTS, RETURN TO THIS
             i = argv.index("-b")
             branch = argv[i+1]
 
-
+        #
         # Opens up repo_list.txt and writes all contents into a list to be used later
-        with open("repo_list.txt", 'r') as e:
+        #
+        with open("repo_list.txt", 'r', newline='') as e:
             repo_list = []
             for i in e:
-                repo_list.append(i)
+                repo_list.append(i.strip())
+        # print(repo_list) FOR DEBUGGING PURPOSES
 
         # Will now look for and zip specific repositories specified by user
         if "-repo" in argv:
@@ -88,27 +90,18 @@ def main(): #USED TO HAVE 'argv = None' HERE. IF ERROR RESULTS, RETURN TO THIS
             desired_repos = argv[start:finish]
             for k in desired_repos:
                 if k in repo_list:
-                    zip([k.lower()], k, login, 'master')
+                    zip([k.lower()], k, "", 'master')
                 else:
-                    print("\n The Repository: '" + k + "' was NOT found.")
+                    print("\n The Repository: '" + k + "' was NOT found.\n")
 
         # Will zip all repositories
         elif "-all" in argv:
             for j in repo_list:
-                zip([j.lower()], j, login, 'master')
+                zip([j.lower()], j, "", 'master')
 
         # Will advise user of improper use of syntax
         else:
-            print("\nPlease either include '-repo <repo names>' separated by white spaces as the script arguments for specific repositories or '-all' for all repositories.")
-
-
-        # if "-all" in argv or 'application1' in repo_list:
-        #     # Create zip file with application1 repo
-        #     zip(['application1'], 'zip_name1', login, 'master')
-        #
-        # if "-all" in argv or 'application2' in repo_list:
-        #     # Create zip file with application2 repo
-        #     zip(['application2'], 'zip_name2', login, 'master')
+            print("\nPlease either include '-repo <repo names>' separated by white spaces as the script arguments for specific repositories or '-all' for all repositories.\n")
 
 
     except Exception as e:
@@ -117,4 +110,3 @@ def main(): #USED TO HAVE 'argv = None' HERE. IF ERROR RESULTS, RETURN TO THIS
 
 if __name__ == '__main__':
     sys.exit(main())
-
