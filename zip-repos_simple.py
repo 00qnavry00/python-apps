@@ -6,9 +6,9 @@ import optparse
 
 # Tool to zip repos from command line with following command
 # ./zip-repos_simple.py -l <login_name>:<password> -all -b master
+import subprocess
 
-
-def zip (repos, zip_name, login_str, branch):
+def zip(repos, zip_name, login_str, branch):
     cloneHTTPS = "git clone https://"
     github ="github.com/00qnavry00"
 
@@ -44,9 +44,12 @@ def zip (repos, zip_name, login_str, branch):
 def full_branch_name(branch, char):
     branch_name = branch
     try:
-        float(branch)
-        branch_name = 'release' + char + branch
-        return branch_name
+        if 'release' in branch:
+            return branch
+        else:
+            float(branch)
+            branch_name = 'release' + char + branch
+            return branch_name
     except ValueError:
         return branch_name
 
@@ -63,6 +66,19 @@ def main(): #USED TO HAVE 'argv = None' AS PARAMETER. IF ERROR RESULTS, RETURN T
         #     if not len(login) or not ':' in login:
         #         print("\nPlease provide login info in the following format: -l <login_name>:<password>\n")
         #         sys.exit()
+
+        if "-h" in argv:
+            print("---------------------------------------\nHELP TOOL \n---------\n\n")
+            print("If you want specific repositories:")
+            print("./zip-repos_simple.py -l <login_name>:<password> -repos repo1 repo2\n\n")
+            print("If you want all repositories:")
+            print("./zip-repos_simple.py -l <login_name>:<password> -all\n\n")
+            print("If you want a branch other than 'master':")
+            print("./zip-repos_simple.py -l <login_name>:<password> -all -b 10.1")
+            print("You can ellect to either use the full branch name or just the suffix")
+            print("If you don't include '-b' branch will be assumed to be 'master'\n\n")
+            print("If you have any difficulties, contact Nina at 'ninkin@yahoo.com'\n---------------------------------------")
+            sys.exit()
 
         if not "-b" in argv:
             print("\nSince '-b <branch_name>' is not specified, we will zip master branch.\n")
@@ -86,22 +102,35 @@ def main(): #USED TO HAVE 'argv = None' AS PARAMETER. IF ERROR RESULTS, RETURN T
             if "-b" in argv:
                 finish_index = argv.index("-b")
             else:
-                finish_index = argv.index("master")
+                finish_index = len(repo_list)
             desired_repos = argv[start:finish_index]
             for k in desired_repos:
                 if k in repo_list:
-                    zip([k.lower()], k, "", 'master')
+                    try:
+                        zip([k.lower()], k, "", full_branch_name(branch, '-'))
+                    except:
+                        try:
+                            zip([k.lower()], k, "", full_branch_name(branch, '/'))
+                        except:
+                            print("\n The Repository: '" + k + "' was NOT found.\n")
                 else:
                     print("\n The Repository: '" + k + "' was NOT found.\n")
 
         # Will zip all repositories
         elif "-all" in argv:
             for j in repo_list:
-                zip([j.lower()], j, "", 'master')
+                try:
+                    zip([j.lower()], j, "", full_branch_name(branch, '-'))
+                except:
+                    try:
+                        zip([j.lower()], j, "", full_branch_name(branch, '/'))
+                    except:
+                        print("\n Potential Syntax Error Detected for '" + j + "' in repo_list.txt")
+
 
         # Will advise user of improper use of syntax
         else:
-            print("\nPlease either include '-repo <repo names>' separated by white spaces as the script arguments for specific repositories or '-all' for all repositories.\n")
+            print("\nPlease either include '-repo <repo names>' separated by white spaces as the script arguments for specific repositories OR '-all' for all repositories.\n")
 
 
     except Exception as e:
