@@ -1,2 +1,2 @@
-application1
-application2
+application1|section1
+application2|section2
