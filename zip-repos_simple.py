@@ -72,10 +72,13 @@ def main(): #USED TO HAVE 'argv = None' AS PARAMETER. IF ERROR RESULTS, RETURN T
             print("./zip-repos_simple.py -l <login_name>:<password> -repos repo1 repo2\n\n")
             print("If you want all repositories:")
             print("./zip-repos_simple.py -l <login_name>:<password> -all\n\n")
+            print("If you want repos from select groups:")
+            print("./zip-repos_simple.py -l <login_name>:<password> -groups group1 group2\n\n")
             print("If you want a branch other than 'master':")
             print("./zip-repos_simple.py -l <login_name>:<password> -all -b 10.1")
             print("You can elect to either use the full branch name or just the suffix")
             print("If you don't include '-b' branch will be assumed to be 'master'\n\n")
+            print("Please ensure when executing the file that commands are typed in specified order.\n\n")
             print("If you have any difficulties, contact Nina at 'ninkin@yahoo.com'\n---------------------------------------")
             sys.exit()
 
@@ -115,8 +118,8 @@ def main(): #USED TO HAVE 'argv = None' AS PARAMETER. IF ERROR RESULTS, RETURN T
                 else:
                     print("\n The Repository: '" + k[0] + "' was NOT found; UNABLE TO ZIP.\n")
 
-        elif "-group" in argv:
-            start = argv.index("-group") + 1
+        elif "-groups" in argv:
+            start = argv.index("-groups") + 1
             if "-b" in argv:
                 finish_index = argv.index("-b")
             else:
@@ -148,7 +151,7 @@ def main(): #USED TO HAVE 'argv = None' AS PARAMETER. IF ERROR RESULTS, RETURN T
         # Will advise user of improper use of syntax
         else:
             print("\nPlease either include '-repo <repo names>' separated by white spaces as the script arguments for specific repositories, '-all' for all repositories,"
-                  " OR '-group <group names>' separated by white spaces as the script arguments for all repositories in a specific group.\n")
+                  " OR '-groups <group names>' separated by white spaces as the script arguments for all repositories from specific groups.\n")
 
 
     except Exception as e:
