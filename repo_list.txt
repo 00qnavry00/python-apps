@@ -1,2 +1,2 @@
-application1
-application2
+application1|section1|2013-11-12 00:00
+application2|section2|2013-11-12 23:59
