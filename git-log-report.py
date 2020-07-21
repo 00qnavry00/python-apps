@@ -2,6 +2,9 @@
 
 import sys
 import os
+from subprocess import check_output, STDOUT, CalledProcessError
+
+
 
 #Tool to give list of branches between specified releases of either all repos or specific repos.
 
@@ -10,13 +13,12 @@ import os
 def git_report(repo, b1, b2, d1, d2):
     os.system("git clone https://github.com/00qnavry00/%s.git" % repo)
     os.chdir(repo)
-    os.system("git show-ref -q --heads %s" % b1)
-    condition1 = os.system("echo $?")
-    os.system("git show-ref -q --heads %s" % b2)
-    condition2 = os.system("echo $?")
-    if condition1 == 0 and condition2 == 0:
+
+    try:
+        check_output(['git', 'checkout', '%s' % b1])
+        check_output(['git', 'checkout', '%s' % b2])
         os.system("git log --pretty=format:%s origin/%s..origin/%s --after=%s --before=%s --date=short > ../git-revision-report-text/%s_revisions.txt" % ("%h%x09%ad", b1, b2, d1, d2, repo))
-    else:
+    except CalledProcessError:
         print("\n\nINVALID BRANCH NAME, USING ONLY DATES\n\n")
         os.system("git log --pretty=format:%s --after=%s --before=%s --date=short > ../git-revision-report-text/%s_revisions.txt" % ("%h%x09%ad", d1, d2, repo))
     os.chdir("../")
@@ -50,6 +52,7 @@ def main():
     elif "-repo" in argv:
         repo = argv[argv.index("-repo") + 1]
         git_report(repo, branch_start, branch_end, date_start, date_end)
+
 
     else:
         print("Incorrect format printed.")
