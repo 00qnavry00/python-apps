@@ -29,10 +29,20 @@ def main():
     # -repo <repo_name>  -branches <branch1> <branch2> -after 2019-03-24 -before 2019-09-30
     os.system("rm -rf git-revision-report-text")
     argv = sys.argv[1:]
-    with open("repo_list.txt", 'r', newline='') as e:
-        repo_list = []
-        for i in e:
-            repo_list.append(i.strip().split("|"))
+
+    if "-file" in argv:
+        file = argv[argv.index("-file") + 1]
+        with open(file, 'r', newline='') as e:
+            repo_list = []
+            for i in e:
+                repo_list.append(i.strip().split("|"))
+
+    else:
+        print("No repo reference file specified, defaulting to 'repo_list.txt'")
+        with open("repo_list.txt", 'r', newline='') as e:
+            repo_list = []
+            for i in e:
+                repo_list.append(i.strip().split("|"))
 
 
     branch_start = argv[argv.index("-branches") + 1]
@@ -48,14 +58,29 @@ def main():
         for j in repo_list:
             git_report(j[0], branch_start, branch_end, date_start, date_end)
 
+    elif "-groups" in argv:
+        if len(argv[argv.index("-groups") + 1].split()) != 1:
+            for a in argv[argv.index("-groups") + 1].split():
+                for b in repo_list:
+                    if b[1] == a:
+                        git_report(b[0], branch_start, branch_end, date_start, date_end)
+        else:
+            group = argv[argv.index("-groups") + 1]
+            for k in repo_list:
+                if k[1] == group:
+                    git_report(k[0], branch_start, branch_end, date_start, date_end)
 
-    elif "-repo" in argv:
-        repo = argv[argv.index("-repo") + 1]
-        git_report(repo, branch_start, branch_end, date_start, date_end)
+    elif "-repos" in argv:
+        if len(argv[argv.index("-repos") + 1].split()) != 1:
+            for c in argv[argv.index("-repos") + 1].split():
+                git_report(c, branch_start, branch_end, date_start, date_end)
+        else:
+            repo = argv[argv.index("-repos") + 1]
+            git_report(repo, branch_start, branch_end, date_start, date_end)
 
 
     else:
-        print("Incorrect format printed.")
+        print("\n\nIncorrect format printed.\n\n")
 
 
 if __name__ == '__main__':
